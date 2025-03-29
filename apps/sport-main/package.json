@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.17",
@@ -17,12 +19,11 @@
     "tailwindcss": "^4.0.17"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@repo/eslint-config": "*",
+    "@repo/prettier-config": "*",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.4",
     "typescript": "^5"
   }
 }
