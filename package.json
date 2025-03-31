@@ -1,29 +1,30 @@
 {
   "name": "PF-Repo",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "turbo run format",
-    "format:fix": "turbo run format:fix",
-    "check-types": "turbo run check-types"
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.0.17",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.17"
   },
   "devDependencies": {
+    "syncpack": "^13.0.3",
     "turbo": "^2.4.4",
-    "typescript": "5.8.2"
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18"
   },
   "packageManager": "npm@11.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev": "turbo run dev",
+    "format": "turbo run format",
+    "format:fix": "turbo run format:fix",
+    "lint": "turbo run lint"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "@tailwindcss/postcss": "^4.0.17",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.17"
-  }
+  ]
 }

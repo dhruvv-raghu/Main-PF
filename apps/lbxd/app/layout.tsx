@@ -7,14 +7,6 @@ const JBM= JetBrains_Mono({
   weight: ["400", "500", "600", "700"]
 })
 
-const Tk= Tektur({
-  variable: "--font-tektur",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"]
-})
-
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${JBM.variable } ${Tk.variable}`}>
+      <body className={`${JBM.variable}`}>
         {children}
       </body>
     </html>

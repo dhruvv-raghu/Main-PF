@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme inline {
+    --font-main: var(--font-jetbrains-mono);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
