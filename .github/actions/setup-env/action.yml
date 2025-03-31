@@ -1,0 +1,28 @@
+name: Prepare environment
+inputs:
+  repo-token:
+    description: 'Token to access the repo'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      shell: bash
+      run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+    - name: Install Packages
+      shell: bash
+      run: npm ci
+      env:
+        CI: true
