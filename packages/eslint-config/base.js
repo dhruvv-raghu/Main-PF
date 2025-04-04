@@ -15,9 +15,14 @@ export const config = [
   ...tseslint.configs.recommended,
   {
     plugins: {
+      jest,
       turbo: turboPlugin,
     },
+    languageOptions:{
+         globals: jest.environment.globals.globals,
+    },
     rules: {
+      ...jest.configs.recommended.rules,
       "turbo/no-undeclared-env-vars": "warn",
       'no-console': 'warn',
       'no-unused-vars': 'warn'

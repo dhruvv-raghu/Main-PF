@@ -5,6 +5,10 @@
   --foreground: #171717;
 }
 
+@theme inline {
+  --font-main: var(--font-jetbrains-mono);
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

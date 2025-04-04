@@ -11,8 +11,6 @@ const config: Config = {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-
-  // Add any custom configuration
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1', // Adjust if your path alias differs
