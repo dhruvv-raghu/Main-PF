@@ -25,7 +25,6 @@
     "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "lint": "next lint",
-    "start": "next start",
-    "test": "jest"
+    "start": "next start"
   }
 }

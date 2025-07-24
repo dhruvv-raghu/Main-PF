@@ -2,21 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import Background from "@/components/VideoOverlay/Background"
 import Navbar from "@/components/Navbar"
 
-import type { VideoItem, VideoConfig } from "@/types/video"
-
-const videos: VideoItem[] = [{ src: "/proj1.mp4" }, { src: "/proj2.mp4" }, { src: "/proj3.mp4" }]
-
-const videoConfig: VideoConfig = {
-  defaultBlur: 5,
-  autoPlay: true,
-  loop: false,
-  muted: true,
-  showControls: false,
-  allowBlurAdjustment: false,
-}
 
 const images = ["/img1.jpg", "/img2.jpg", "/img3.jpg", "/img4.jpg"]
 
@@ -29,58 +16,9 @@ const titleVariants = {
   },
 }
 
-// Typing animation component with fixed height container
-const TypedText = ({
-  text,
-  delay = 0,
-  className = "",
-  minHeight = "auto",
-}: {
-  text: string
-  delay?: number
-  className?: string
-  minHeight?: string
-}) => {
-  const [displayText, setDisplayText] = useState("")
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isComplete, setIsComplete] = useState(false)
-
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayText((prev) => prev + text[currentIndex])
-        setCurrentIndex((prev) => prev + 1)
-      }, 100) // typing speed
-
-      return () => clearTimeout(timeout)
-    } else {
-      setIsComplete(true)
-    }
-  }, [currentIndex, text])
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay }}
-      className={`inline-block ${className}`}
-      style={{ minHeight }}
-    >
-      {displayText}
-      {!isComplete && (
-        <motion.span
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 0.7 }}
-          className="inline-block ml-1 w-1 h-8 bg-[#FFC300]"
-        />
-      )}
-    </motion.div>
-  )
-}
-
 // Image carousel component for background
-const ImageCarousel = ({ images }: { images: string[] }) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
+const ImageCarousel = ({ images, offset = 0 }: { images: string[]; offset?: number }) => {
+  const [currentIndex, setCurrentIndex] = useState(offset)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -92,6 +30,7 @@ const ImageCarousel = ({ images }: { images: string[] }) => {
 
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden">
+
       <AnimatePresence initial={false}>
         <motion.img
           key={currentIndex}
@@ -109,49 +48,60 @@ const ImageCarousel = ({ images }: { images: string[] }) => {
   )
 }
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="min-h-screen flex flex-col font-main">
+    <div className="min-h-screen">
       <Navbar />
 
-      {/* Hero Section - Extremely spacious */}
-      <Background videos={videos} Config={videoConfig} className="h-screen w-full">
-        <div className="container mx-auto px-8 h-full flex flex-col items-center justify-center text-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={titleVariants}
-            className="p-8 mx-2 text-white max-w-6xl ml-auto mr-0 pr-0" // Moved to the right
-          >
-            {/* Pre-allocate space for the heading to prevent layout shift */}
-            <div className="h-[12rem] sm:h-[14rem] md:h-[16rem] lg:h-[18rem] flex items-center justify-end"> {/* Justify to end */}
+      {/* Hero Section */}
+      <section className="h-screen w-full relative overflow-hidden">
+        <ImageCarousel images={images} />
+        <div className="relative z-20 h-full flex items-center justify-end pr-16">
+          <div className="font-main text-right text-white max-w-6xl">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={titleVariants}
+              className="p-8"
+            >
               <motion.h1
                 initial={{ scale: 0.95 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-7xl flex items-left justify-end sm:text-8xl md:text-9xl lg:text-[12rem] font-bold drop-shadow-lg tracking-tight"
+                className="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] font-bold drop-shadow-lg tracking-tight"
               >
-                <TypedText text="Cinema" delay={0.5} />
+                Cinema
               </motion.h1>
-            </div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 2.5 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-light drop-shadow-md mt-16 text-right" // Aligned right
-            >
-              Through my Lens
-            </motion.p>
-          </motion.div>
+              <motion.p
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 2.5 }}
+                className="text-3xl sm:text-4xl md:text-5xl font-light drop-shadow-md mt-16"
+              >
+                Through my Lens
+              </motion.p>
+              
+              <motion.p
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 3.5 }}
+                className="text-lg text-gray-300 mt-8"
+              >
+                Scroll to see what this site has in store.
+              </motion.p>
+            </motion.div>
+          </div>
         </div>
-      </Background>
+      </section>
 
-      {/* Thoughts & Insights Section - Full screen with image background */}
+      {/* Thoughts & Insights Section */}
       <section className="h-screen w-full relative overflow-hidden">
-        {/* Background carousel */}
-        <ImageCarousel images={images} />
-        
+        {/* Background carousel (same array, offset to alternate) */}
+        <ImageCarousel images={images} offset={2} />
+
         {/* Content overlay */}
         <div className="relative z-20 h-full w-full flex items-center">
           <div className="container mx-auto px-12">
@@ -162,19 +112,27 @@ export default function Home() {
               viewport={{ once: true }}
               className="max-w-2xl ml-12 md:ml-24"
             >
-              <h2 className="text-6xl md:text-8xl font-light mb-16 leading-tight text-white tracking-tight">
+              <motion.h2
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 0.2 }}
+                className="text-6xl md:text-8xl font-light mb-16 leading-tight text-white tracking-tight"
+              >
                 Thoughts &<br />
                 Insights
-              </h2>
+              </motion.h2>
 
-              {/* Fixed height container for typed text to prevent layout shift */}
-              <div className="text-2xl text-gray-200 mb-16 leading-relaxed font-light min-h-[200px]">
-                <TypedText
-                  text="Dive into a world where cinema meets personal perspective. Every frame tells a story; every scene evokes an emotion."
-                  delay={0.5}
-                  minHeight="200px"
-                />
-              </div>
+              <motion.p
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 0.8 }}
+                className="text-2xl text-gray-200 mb-16 leading-relaxed font-light"
+              >
+                Dive into a world where cinema meets personal perspective.
+                Every frame tells a story; every scene evokes an emotion.
+              </motion.p>
 
               <motion.a
                 href="/blog"
@@ -196,6 +154,48 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Movie Reviews Section */}
+      <section className="h-screen w-full relative overflow-hidden">
+        {/* Background carousel (same array, offset to alternate) */}
+        <ImageCarousel images={images} offset={3} />
+
+        {/* Content overlay */}
+        <div className="relative z-20 h-full w-full flex items-center">
+          <div className="container mx-auto px-12">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              viewport={{ once: true }}
+              className="max-w-2xl ml-12 md:ml-24"
+            >
+              <motion.h2
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 0.2 }}
+                className="text-6xl md:text-8xl font-light mb-16 leading-tight text-white tracking-tight"
+              >
+                Movie<br />
+                Reviews
+              </motion.h2>
+
+              <motion.p
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+                transition={{ delay: 0.8 }}
+                className="text-2xl text-gray-200 mb-16 leading-relaxed font-light"
+              >
+                Expressing my honest views on recently released movies.
+                Raw thoughts and unfiltered opinions on the latest cinema.
+              </motion.p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
     </div>
   )
 }

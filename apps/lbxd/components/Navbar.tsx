@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 w-full float-right clear-both ${
         isScrolled ? "bg-black/30 backdrop-blur-md py-4" : "bg-transparent py-6"
       }`}
     >
@@ -34,7 +34,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
           <Link href="/" className="!text-white text-4xl font-bold tracking-wider">
-            [Watchr] <p className="text-white text-2xl font-bold tracking-wider">A Dhruvv Raghu Project</p>
+            [Watchr] <span className="block text-white text-2xl font-bold tracking-wider">A Dhruvv Raghu Project</span>
           </Link>
           
 
@@ -42,9 +42,7 @@ export default function Navbar() {
           <div className="text-white text-8xl items-center gap-20 flex">
 
             
-            <NavLink href="/blog">The Blog</NavLink>
-            <NavLink href="/about">About</NavLink>
-            <NavLink href="/contact">Contact</NavLink>
+            <NavLink href="/blog">Click here for The Blog</NavLink>
           </div>
 
           {/* Mobile Menu Button */}

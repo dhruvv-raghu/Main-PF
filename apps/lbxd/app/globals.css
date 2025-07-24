@@ -40,10 +40,12 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
+    --font-main: var(--font-jetbrains-mono);
 }
 
 html,
 body {
+  background-color: #000;
   max-width: 100vw;
   overflow-x: hidden;
 }
