@@ -20,6 +20,7 @@
   "devDependencies": {
     "@repo/eslint-config": "0.0.0",
     "@repo/prettier-config": "0.0.0",
+    "@repo/typescript-config": "0.0.0",
     "@types/node": "^22.13.10",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
