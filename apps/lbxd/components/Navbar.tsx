@@ -38,21 +38,11 @@ export default function Navbar() {
           </Link>
           
 
-          {/* Desktop Navigation */}
           <div className="text-white text-8xl items-center gap-20 flex">
 
             
             <NavLink href="/blog">Click here for The Blog</NavLink>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
       </div>
 

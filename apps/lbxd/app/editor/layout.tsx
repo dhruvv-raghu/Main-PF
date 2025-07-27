@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
+import React from "react";
 
-// The main BlogLayout component
 export default function BlogLayout({
   children,
 }: {
@@ -10,7 +9,7 @@ export default function BlogLayout({
 }) {
   return (
     <div>
-      <div>
+      <div className="bg-yellow-300 font-main">
         {children}
       </div>
     </div>
