@@ -1,11 +1,11 @@
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const JBM= JetBrains_Mono({
+const JBM = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"]
-})
+  weight: ["400", "500", "600", "700"],
+});
 
 export default function RootLayout({
   children,
@@ -14,9 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${JBM.variable} `}>
-        {children}
-      </body>
+      <body className={`${JBM.variable} font-main`}>{children}</body>
     </html>
   );
 }
