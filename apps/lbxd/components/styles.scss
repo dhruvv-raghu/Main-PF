@@ -1,7 +1,8 @@
 /* TipTap Editor Styles */
 /* 1. CSS Variables   ========================================================================== */
 :root {
-  --purple: #9333ea; // A generic purple for selection/handles
+  --purple: #9333ea;
+  --yellow: #ffff00; // A generic purple for selection/handles
   --blue: #3b82f6;
   --gray-light: #f8fafc;
   --gray-medium: #64748b;
@@ -179,7 +180,7 @@
     max-width: 100%;
     margin: 1.5rem auto;
     &.ProseMirror-selectednode {
-      outline: 3px solid var(--purple);
+      outline: 3px solid;
     }
   }
 

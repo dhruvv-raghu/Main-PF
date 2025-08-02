@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Brain, Users, Lightbulb } from "lucide-react";
+// Import ArrowDown for the button icon
+import { ArrowDown } from "lucide-react";
 
 const About = () => {
   const introRef = useRef<HTMLDivElement>(null);
@@ -31,10 +32,10 @@ const About = () => {
 
   return (
     <>
-      {/* SECTION 1: Full-screen centered title (like Hero) */}
+      {/* SECTION 1: Full-screen centered title with button */}
       <section
         ref={introRef}
-        className="min-h-screen bg-[#354f52] flex flex-col items-center justify-center p-6"
+        className="min-h-screen bg-[#354f52] flex flex-col items-center justify-center p-6 text-center"
       >
         <div
           className={`transition-all duration-1000 ${
@@ -43,13 +44,25 @@ const About = () => {
               : "opacity-0 translate-y-10"
           }`}
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Here, You'll find everything About Me!
-          </h2>
-          <p className="text-4xl md:text-4xl text-white/70 max-w-4xl mx-auto">
-            A brief look into my passions, skills, and what drives my work in
-            technology. Just keep scrolling!
-          </p>
+          <div className="space-y-8 text-left">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Here, You'll Find Everything About Me!
+            </h2>
+            <div className="max-w-6xl">
+              <p className="text-xl md:text-2xl text-white/70 mb-10 leading-relaxed">
+                You can keep scrolling to learn more about my background, or
+                click the button below to jump straight to my work.
+              </p>
+              <br />
+              <a
+                href="projects"
+                className="inline-flex items-center gap-4 px-12 py-6 bg-[#84a98c] text-[#2f3e46] text-xl font-bold rounded-full shadow-lg hover:bg-[#cad2c5] hover:scale-105 transition-all duration-300 hover:shadow-xl"
+              >
+                View My Projects
+                <ArrowDown className="w-6 h-6" />
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -62,7 +75,7 @@ const About = () => {
         {/* Background Image with Blur Effect */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/mainpf3.jpeg" // Using one of your gallery images
+            src="/mainpf3.jpeg"
             alt="Abstract background"
             className="w-full h-full object-cover"
           />
@@ -80,7 +93,7 @@ const About = () => {
             }`}
           >
             <div className="space-y-6 text-left">
-              <p className="text-lg md:text-xl text-white leading-relaxed">
+              <p className="text-lg md:text-3xl text-white leading-relaxed">
                 I'm a student pursuing a future in Data Science and Machine
                 Learning. I particularly enjoy understanding the Mathematical
                 Design of ML Systems from the ground-up. I love building them

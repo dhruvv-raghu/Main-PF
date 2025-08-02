@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Code, Database, Brain, Server, Layout, BarChart3 } from "lucide-react";
+import {
+  Code,
+  Database,
+  Brain,
+  Server,
+  Layout,
+  BarChart3,
+  Calculator,
+} from "lucide-react";
 
 const Technologies = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -42,13 +50,28 @@ const Technologies = () => {
     { name: "NetworkX", icon: Database, color: "#ff6b35" },
   ];
 
+  const CSTech = [
+    { name: "Docker", icon: Server, color: "#ee4c4c" },
+    { name: "Linux", icon: Server, color: "#ff6b35" },
+    { name: "Git", icon: Code, color: "#000000" },
+    { name: "GitHub", icon: Code, color: "#000000" },
+    { name: "Actions", icon: Server, color: "#150458" },
+  ];
+
+  const Documentation = [
+    { name: "Jekyll", icon: Code, color: "#84a98c" },
+    { name: "Markdown", icon: Code, color: "#f7df1e" },
+    { name: "LaTex", icon: Calculator, color: "#3178c6" },
+    { name: "Obsidian", icon: Code, color: "#61dafb" },
+  ];
+
   // TechCard with slight modifications:
   // - Each card moves a bit to the right via container margin (ml-4 in grid)
   // - Increased gap between cards (gap-6)
   // - A bottom margin is added to cards to push the bottom row a little further down
   const TechCard = ({ tech, index }: { tech: any; index: number }) => (
     <div
-      className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl p-4 w-36 h-36 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group ${
+      className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl p-4 w-25 h-25 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`}
       style={{
@@ -72,46 +95,72 @@ const Technologies = () => {
     <section
       ref={sectionRef}
       id="technologies"
-      className="min-h-screen flex flex-col justify-center py-20 bg-[#2f3e46]"
+      className="min-h-screen flex flex-col justify-center bg-[#2f3e46]"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-8 pt-8">
+      <div className="max-w-7xl mx-auto px-6 md:px-8">
         {/* Top Title Section - moved higher up */}
         <div
-          className={`text-center mb-1 transition-all duration-1000 ${
+          className={`text-center transition-all duration-1000 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">
             Technologies
           </h2>
+          <h3 className="text-2xl md-text-3xl text-white">
+            (I can learn what you want me to learn, and Quick!)
+          </h3>
         </div>
-        {/* Two-Column Layout for Skills */}
-        <div className=" flex items-center gap-12 lg:gap-20">
-          {/* Left Column: Web Development */}
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-[#84a98c] text-center lg:text-left ml-8">
-              Web Development
-            </h3>
-            <div className="grid grid-cols-3 sm:grid-cols-3 gap-20 justify-items-center ml-12">
-              {frontendTech.map((tech, index) => (
-                <TechCard key={tech.name} tech={tech} index={index} />
-              ))}
-            </div>
+        <br />
+        {/* Documentation Section */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold text-[#84a98c] text-center">
+            General CS Skills
+          </h3>
+          <br />
+          <div className="grid grid-cols-5 gap-8 justify-items-center mt-4">
+            {CSTech.map((tech, index) => (
+              <TechCard key={tech.name} tech={tech} index={index} />
+            ))}
           </div>
-          {/* Right Column: Data Science */}
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-[#84a98c] text-center lg:text-left ml-8">
-              Data Science & ML
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-20 justify-items-center ml-12">
-              {dataScienceTech.map((tech, index) => (
-                <TechCard
-                  key={tech.name}
-                  tech={tech}
-                  index={index + frontendTech.length} // Continue animation stagger
-                />
-              ))}
-            </div>
+        </div>
+        <br />
+        {/* Documentation Section */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold text-[#84a98c] text-center">
+            Documentation & Writing
+          </h3>
+          <br />
+          <div className="grid grid-cols-4 gap-8 justify-items-center mt-4">
+            {Documentation.map((tech, index) => (
+              <TechCard key={tech.name} tech={tech} index={index} />
+            ))}
+          </div>
+        </div>
+        <br />
+        {/* Section Divider */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold text-[#84a98c] text-center">
+            Python and DS Skills
+          </h3>
+          <br />
+          <div className="grid grid-cols-5 gap-8 justify-items-center mt-4">
+            {dataScienceTech.map((tech, index) => (
+              <TechCard key={tech.name} tech={tech} index={index} />
+            ))}
+          </div>
+        </div>
+        <br />
+        {/* Section Divider */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-bold text-[#84a98c] text-center">
+            Web Development
+          </h3>
+          <br />
+          <div className="grid grid-cols-6 gap-8 justify-items-center mt-4">
+            {frontendTech.map((tech, index) => (
+              <TechCard key={tech.name} tech={tech} index={index} />
+            ))}
           </div>
         </div>
       </div>
