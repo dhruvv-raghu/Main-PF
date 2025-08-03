@@ -204,13 +204,13 @@ export default function Page() {
         <div className="absolute inset-0 flex">
           {/* Three vertical divisions */}
           <div className="flex-1">
-            <StaticImage src={images[0]} alt="Cinema experience 1" />
+            <StaticImage src={images[0]!} alt="Cinema experience 1" />
           </div>
           <div className="flex-1">
-            <StaticImage src={images[1]} alt="Cinema experience 2" />
+            <StaticImage src={images[1]!} alt="Cinema experience 2" />
           </div>
           <div className="flex-1">
-            <StaticImage src={images[2]} alt="Cinema experience 3" />
+            <StaticImage src={images[2]!} alt="Cinema experience 3" />
           </div>
         </div>
 
