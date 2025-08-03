@@ -89,7 +89,9 @@ const ProjectShowcase = () => {
       {projects.map((project, index) => (
         <section
           key={index}
-          ref={(el) => (sectionsRef.current[index] = el)}
+          ref={(el) => {
+            sectionsRef.current[index] = el;
+          }}
           className="relative min-h-screen flex items-center py-20"
         >
           {/* Background Image with Blur Effect */}
