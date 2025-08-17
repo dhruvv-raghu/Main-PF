@@ -495,7 +495,7 @@ export default function Tiptap() {
   });
 
   const handleSavePost = async () => {
-    if (!title.trim() || !editor?.getHTML()) {
+    if (!title.trim() || !editor?.getJSON()) {
       setSaveStatus('Please enter a title and content');
       return;
     }
@@ -504,7 +504,7 @@ export default function Tiptap() {
     setSaveStatus('');
 
     try {
-      console.log(editor.getJSON());
+      
       const response = await fetch('/api/posts', {
         method: 'POST',
         headers: {

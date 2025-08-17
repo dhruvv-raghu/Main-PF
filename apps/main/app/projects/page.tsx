@@ -21,7 +21,7 @@ const ProjectShowcase = () => {
         "A sophisticated dockerized AI system that processes videos and PDFs via Kafka streaming, featuring intelligent cross-modal content analysis for enhanced learning experiences.",
       tech: ["Python", "Docker", "Kafka", "AI/ML"],
       link: "https://github.com/dhruvv-raghu",
-      image: "/placeholder.svg?height=800&width=1200",
+      image: "/img1.jpg",
     },
     {
       title: "Language Interpreters",
@@ -29,7 +29,7 @@ const ProjectShowcase = () => {
         "Advanced AST Walker interpreters including PyLox and TensorSpeak, designed for intuitive neural network declaration with custom syntax and semantic analysis.",
       tech: ["Python", "AST", "Compilers"],
       link: "https://github.com/dhruvv-raghu",
-      image: "/placeholder.svg?height=800&width=1200",
+      image: "/mainpf2.jpg",
     },
     {
       title: "Sports Analytics Pipeline",
@@ -45,7 +45,7 @@ const ProjectShowcase = () => {
         "Advanced optimization algorithms for deep learning models featuring adaptive learning rates and momentum-based convergence for improved training efficiency.",
       tech: ["PyTorch", "NumPy", "Optimization"],
       link: "https://github.com/dhruvv-raghu",
-      image: "/placeholder.svg?height=800&width=1200",
+      image: "/img2.jpg",
     },
   ];
 
@@ -102,7 +102,7 @@ const ProjectShowcase = () => {
               className="w-full h-full object-cover"
             />
             {/* Gradient overlay for blur effect and text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#2f3e46] via-[#2f3e46]/20 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#2f3e46] via-[#2f3e46]/50 to-transparent"></div>
           </div>
 
           {/* Left-aligned Content */}

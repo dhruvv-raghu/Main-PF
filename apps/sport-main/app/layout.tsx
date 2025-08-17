@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${JBM.variable}`}>
+      <body className={`${JBM.variable} font-main`}>
         {children}
       </body>
     </html>
