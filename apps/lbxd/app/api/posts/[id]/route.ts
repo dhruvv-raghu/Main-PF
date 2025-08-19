@@ -1,11 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { pool } from '@/lib/dbconnect';
+import { NextRequest, NextResponse } from "next/server";
+import { pool } from "@/lib/dbconnect";
 
-// GET function is correct, no changes needed.
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+interface RouteParams {
+  params: { id: string };
+}
+
+// GET
+export async function GET(req: NextRequest, { params }: RouteParams) {
+  const { id } = params;
+
   try {
     const client = await pool.connect();
-
     try {
       const result = await client.query(
         `
@@ -13,15 +18,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         FROM blog_posts
         WHERE id = $1
       `,
-       [params.id]
+        [id]
       );
 
       if (result.rows.length === 0) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
 
-      // node-postgres automatically parses a JSON/JSONB column into an object on SELECT.
-      // So, result.rows[0].content is already a JS object. This is correct.
       const post = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
@@ -35,22 +38,25 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       client.release();
     }
   } catch (error) {
-    console.error('Database error:', error);
-    return NextResponse.json({ error: 'Failed to fetch post' }, { status: 500 });
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Failed to fetch post" }, { status: 500 });
   }
 }
 
-// PUT function is updated to handle the JSON content correctly.
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+// PUT
+export async function PUT(req: NextRequest, { params }: RouteParams) {
+  const { id } = params;
   try {
-    const { title, content } = await request.json();
+    const { title, content } = await req.json();
 
     if (!title || !content) {
-      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Title and content are required" },
+        { status: 400 }
+      );
     }
 
     const client = await pool.connect();
-
     try {
       const result = await client.query(
         `
@@ -59,13 +65,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         WHERE id = $3
         RETURNING id, title, content, created_at, updated_at
       `,
-        // FIX: Stringify the 'content' object before sending it to the database.
-        // This prevents it from being saved as the string "[object Object]".
-        [title, JSON.stringify(content), params.id]
+        [title, JSON.stringify(content), id]
       );
 
       if (result.rows.length === 0) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
 
       const updatedPost = {
@@ -81,16 +85,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       client.release();
     }
   } catch (error) {
-    console.error('Database error:', error);
-    return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
   }
 }
 
-// DELETE function is correct, no changes needed.
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+// DELETE
+export async function DELETE(req: NextRequest, { params }: RouteParams) {
+  const { id } = params;
   try {
     const client = await pool.connect();
-
     try {
       const result = await client.query(
         `
@@ -98,19 +102,19 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         WHERE id = $1
         RETURNING id
       `,
-        [params.id]
+        [id]
       );
 
       if (result.rows.length === 0) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
 
-      return NextResponse.json({ message: 'Post deleted successfully' });
+      return NextResponse.json({ message: "Post deleted successfully" });
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Database error:', error);
-    return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
+    console.error("Database error:", error);
+    return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 }

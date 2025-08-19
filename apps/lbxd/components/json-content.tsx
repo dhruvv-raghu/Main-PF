@@ -1,5 +1,7 @@
-import React from 'react';
+"use client"
+import React from "react";
 
+// Define the structure of a Tiptap node
 interface TiptapNode {
   type: string;
   attrs?: Record<string, any>;
@@ -8,131 +10,161 @@ interface TiptapNode {
   marks?: Array<{ type: string; attrs?: Record<string, any> }>;
 }
 
+// Define the props for the TiptapJsonRenderer component
 interface TiptapJsonRendererProps {
   content: {
-    type: 'doc';
+    type: "doc";
     content: TiptapNode[];
   };
   className?: string;
 }
 
-const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = '' }) => {
+// A helper component to dynamically render heading tags (h1, h2, etc.)
+// This avoids the TypeScript complexities of React.createElement for dynamic tags
+interface DynamicHeadingTagProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  tag: keyof JSX.IntrinsicElements; // Specifies that `tag` must be a valid HTML element tag name
+  children: React.ReactNode; // Content to be rendered inside the heading
+}
+
+const DynamicHeadingTag: React.FC<DynamicHeadingTagProps> = ({ tag, children, ...props }) => {
+  const Tag = tag; // Assigns the string tag name to a variable for use as a component
+  return <Tag {...props}>{children}</Tag>; // Renders the specified HTML tag with its props and children
+};
+
+// Main component to render Tiptap JSON content
+const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "" }) => {
+  // Recursively renders a single Tiptap node and its children
   const renderNode = (node: TiptapNode, index: number): React.ReactNode => {
-    // Recursively render child nodes, passing a unique key
+    // Recursively render children nodes if they exist
     const children = node.content?.map((child, i) => renderNode(child, i));
 
+    // Handle different node types based on Tiptap's schema
     switch (node.type) {
-      case 'paragraph':
-        // FIX: Increased bottom margin for more space between paragraphs
+      case "paragraph":
         return (
-          <p key={index} className="mb-6 text-black leading-relaxed">
+          <p key={index} className="mb-6 text-white leading-relaxed text-lg text-center">
             {children}
           </p>
         );
 
-      case 'heading':
-        const level = node.attrs?.level || 1;
-        const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
-        // FIX: Replaced custom theme classes with black/dark Tailwind classes
-        const headingClasses = {
-          1: "text-4xl font-bold mb-6 text-black",
-          2: "text-3xl font-semibold mb-5 text-black",
-          3: "text-2xl font-semibold mb-4 text-black"
+      case "heading": {
+        const level = (node.attrs?.level ?? 1) as number; // Get heading level, default to 1
+        // Define Tailwind CSS classes for different heading levels
+        const headingClasses: Record<number, string> = {
+          1: "text-4xl font-bold mb-8 text-[#38aecc] text-center",
+          2: "text-3xl font-semibold mb-6 text-[#38aecc] text-center",
+          3: "text-2xl font-semibold mb-4 text-[#38aecc] text-center",
         };
-        
-        return (
-          <HeadingTag key={index} className={headingClasses[level as keyof typeof headingClasses]}>
-            {children}
-          </HeadingTag>
-        );
 
-      case 'bulletList':
+        // Use the DynamicHeadingTag component to render the correct heading (h1, h2, etc.)
         return (
-          <ul key={index} className="list-disc list-inside mb-6 space-y-2 text-black">
+          <DynamicHeadingTag
+            key={index}
+            tag={`h${level}`} // Pass the dynamic tag name
+            className={headingClasses[level] ?? ""} // Apply appropriate styling
+          >
+            {children}
+          </DynamicHeadingTag>
+        );
+      }
+
+      case "bulletList":
+        return (
+          <ul
+            key={index}
+            className="list-disc list-inside mb-6 space-y-2 text-white max-w-3xl mx-auto text-left"
+          >
             {children}
           </ul>
         );
 
-      case 'orderedList':
+      case "orderedList":
         return (
-          <ol key={index} className="list-decimal list-inside mb-6 space-y-2 text-black">
+          <ol
+            key={index}
+            className="list-decimal list-inside mb-6 space-y-2 text-white max-w-3xl mx-auto text-left"
+          >
             {children}
           </ol>
         );
 
-      case 'listItem':
-        return (
-          <li key={index} className="text-black list-style-none mx-0 px-0">{children}</li>
-        );
+      case "listItem":
+        return <li key={index}>{children}</li>;
 
-      case 'blockquote':
-        // FIX: Using black border, with gray background/text for contrast
+      case "blockquote":
         return (
-          <blockquote key={index} className="border-l-4 border-black pl-6 py-2 mb-6 italic text-gray-700 bg-gray-100">
+          <blockquote
+            key={index}
+            className="border-l-4 border-[#38aecc] pl-6 py-4 mb-8 italic bg-[#046e8f]/20 text-gray-200 rounded-lg max-w-3xl mx-auto"
+          >
             {children}
           </blockquote>
         );
 
-      case 'horizontalRule':
-        // FIX: A standard <hr> with a black top border
+      case "horizontalRule":
+        return <hr key={index} className="my-10 border-t border-[#046e8f]/60" />;
+
+      case "hardBreak":
         return (
-          <hr key={index} className="my-8 border-t border-black" />
+          // React.Fragment is used to group multiple elements without adding an extra DOM node
+          <React.Fragment key={index}>
+            <br />
+            <br />
+          </React.Fragment>
         );
 
-      case 'hardBreak':
-        // FIX: Using a single <br /> for a proper hard break
-        return (<React.Fragment key={index}>
-          <br />
-          <br />
-          </React.Fragment>);
-
-      case 'image':
+      case "image":
         return (
-          <img
-            key={index}
-            src={node.attrs?.src}
-            alt={node.attrs?.alt || ''}
-            className="max-w-full h-auto my-6 rounded border border-black"
-          />
+          <div key={index} className="flex justify-center my-8">
+            <img
+              src={node.attrs?.src}
+              alt={node.attrs?.alt || ""}
+              className="max-w-full h-auto rounded-lg border border-[#046e8f]/50 shadow-md"
+            />
+          </div>
         );
 
-      case 'table':
+      case "table":
         return (
-          <div key={index} className="overflow-x-auto my-6">
-            <table className="w-full border-collapse border border-black">
-              <tbody>
-                {children}
-              </tbody>
+          <div key={index} className="overflow-x-auto my-8 max-w-4xl mx-auto">
+            <table className="w-full border-collapse border border-[#046e8f]/50">
+              <tbody>{children}</tbody>
             </table>
           </div>
         );
 
-      case 'tableRow':
+      case "tableRow":
         return (
-          <tr key={index} className="border-b border-black">
+          <tr key={index} className="border-b border-[#046e8f]/50">
             {children}
           </tr>
         );
 
-      case 'tableHeader':
+      case "tableHeader":
         return (
-          <th key={index} className="border border-black px-4 py-2 text-left font-semibold bg-gray-200 text-black">
+          <th
+            key={index}
+            className="border border-[#046e8f]/50 px-4 py-2 text-left font-semibold bg-[#183446] text-[#38aecc]"
+          >
             {children}
           </th>
         );
 
-      case 'tableCell':
+      case "tableCell":
         return (
-          <td key={index} className="border border-black px-4 py-2 text-black">
+          <td key={index} className="border border-[#046e8f]/50 px-4 py-2 text-white">
             {children}
           </td>
         );
 
-      case 'youtube':
+      case "youtube": {
         const { src, width = 640, height = 480 } = node.attrs || {};
         return (
-          <div key={index} className="my-6 flex justify-center">
-            <div className="relative rounded overflow-hidden border border-black" style={{ maxWidth: width }}>
+          <div key={index} className="my-8 flex justify-center">
+            <div
+              className="relative rounded overflow-hidden border border-[#046e8f]/50 shadow-md"
+              style={{ maxWidth: width }}
+            >
               <iframe
                 src={src}
                 width={width}
@@ -144,55 +176,59 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = '
             </div>
           </div>
         );
+      }
 
-      case 'text':
+      case "text": {
         const marks = node.marks || [];
-        let textElement: React.ReactNode = node.text;
+        let textElement: React.ReactNode = node.text; // Start with the raw text
 
-        marks.forEach(mark => {
+        // Apply marks (bold, italic, etc.) in order
+        marks.forEach((mark) => {
           switch (mark.type) {
-            case 'bold':
+            case "bold":
               textElement = <strong className="font-bold">{textElement}</strong>;
               break;
-            case 'italic':
+            case "italic":
               textElement = <em className="italic">{textElement}</em>;
               break;
-            case 'underline':
+            case "underline":
               textElement = <u className="underline">{textElement}</u>;
               break;
-            case 'strike':
+            case "strike":
               textElement = <s className="line-through">{textElement}</s>;
               break;
-            case 'code':
+            case "code":
               textElement = (
-                <code className="px-2 py-1 bg-gray-200 text-black rounded text-sm font-mono border border-gray-300">
+                <code className="px-2 py-1 bg-[#183446] text-[#38aecc] rounded text-sm font-mono border border-[#046e8f]/40">
                   {textElement}
                 </code>
               );
               break;
+            // Add more mark types as needed (e.g., link, subscript, superscript)
           }
         });
 
-        return textElement;
+        // Crucial fix: Wrap the textElement in a span with a unique key.
+        // This ensures that every text node, even plain strings, has a stable identity when rendered as part of a list.
+        return <span key={`${node.type}-${index}`}>{textElement}</span>;
+      }
 
       default:
-        // Using a Fragment to avoid adding extra divs for unknown node types.
+        // If a node type is not specifically handled, render its children
         if (node.content) {
           return <React.Fragment key={index}>{children}</React.Fragment>;
         }
-        return null;
+        return null; // If no content, render nothing
     }
   };
 
+  // Display a message if no content is provided
   if (!content || !content.content) {
-    return <div className="text-gray-500">No content to display</div>;
+    return <div className="text-gray-400 text-center">No content to display</div>;
   }
 
-  return (
-    <div className={`max-w-none ${className}`}>
-      {content.content.map(renderNode)}
-    </div>
-  );
+  // Render the top-level content by mapping through the content array
+  return <div className={`max-w-4xl mx-auto ${className}`}>{content.content.map(renderNode)}</div>;
 };
 
 export default JsonContent;

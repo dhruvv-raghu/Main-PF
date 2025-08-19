@@ -1,7 +1,7 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "types": [],
     "paths": {
       "react": [
@@ -17,7 +17,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/TiptapRenderer.jsx"
+    "app"
   ],
   "exclude": [
     "node_modules"

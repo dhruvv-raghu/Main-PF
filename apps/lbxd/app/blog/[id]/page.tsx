@@ -27,29 +27,32 @@ interface BlogPost {
   updatedAt: string
 }
 
+// --- NAVBAR ---
 function BlogPostNavbar() {
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50 bg-black w-full shadow-2xl">
-      <div className="container mx-auto px-6 md:px-8">
+    <nav className="sticky top-0 left-0 right-0 z-50 bg-[#022f40] w-full shadow-md border-b border-[#046e8f]/30 font-main">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="group">
-            <div className="transition-transform duration-300 group-hover:scale-105">
-              <span className="text-yellow-300 text-2xl font-bold tracking-wider">[Watchr]</span>
-              <span className="block text-yellow-300 text-sm font-semibold tracking-wider opacity-80">
+          <Link href="/" className="group flex-1 flex justify-start">
+            <div className="transition-all duration-300 group-hover:scale-105 text-center">
+              <span className="text-[#38aecc] text-3xl font-bold tracking-wide block">
+                [Watchr]
+              </span>
+              <span className="block text-[#38aecc]/70 text-base font-medium tracking-wider">
                 A Dhruvv Raghu Project
               </span>
             </div>
           </Link>
           <div className="flex items-center gap-6">
             <Link href="/blog">
-              <button className="text-yellow-300 flex items-center gap-2 transition-all duration-300 px-4 py-2 rounded-lg">
-                <ArrowLeft className="w-4 h-4" />
+              <button className="text-[#38aecc] hover:text-[#0090c1] flex items-center gap-2 px-4 py-3 rounded-lg border border-[#38aecc]/30 transition-all duration-300 text-lg">
+                <ArrowLeft className="w-5 h-5" />
                 Back to Blog
               </button>
             </Link>
             <Link href="/editor">
-              <button className="text-yellow-300 flex items-center gap-2 transition-all duration-300 px-4 py-2 rounded-lg">
-                <FileText className="w-4 h-4" />
+              <button className="text-[#38aecc] hover:text-[#0090c1] flex items-center gap-2 px-4 py-3 rounded-lg border border-[#38aecc]/30 transition-all duration-300 text-lg">
+                <FileText className="w-5 h-5" />
                 Editor
               </button>
             </Link>
@@ -60,6 +63,7 @@ function BlogPostNavbar() {
   )
 }
 
+// --- PAGE ---
 export default function BlogPostPage() {
   const params = useParams()
   const [post, setPost] = useState<BlogPost | null>(null)
@@ -74,9 +78,9 @@ export default function BlogPostPage() {
           if (!response.ok) throw new Error("Post not found")
           const data = await response.json()
           const finalPostData = {
-                      ...data,
-                      content: typeof data.content === "string" ? JSON.parse(data.content) : data.content,
-                    }
+            ...data,
+            content: typeof data.content === "string" ? JSON.parse(data.content) : data.content,
+          }
           setPost(finalPostData)
         } catch (err) {
           console.error("Failed to fetch post:", err)
@@ -92,7 +96,6 @@ export default function BlogPostPage() {
     }
   }, [params])
 
-  // Utility functions for formatting post data
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -104,64 +107,63 @@ export default function BlogPostPage() {
     if (!json?.content) return ""
     let text = ""
     for (const node of json.content) {
-      if (node.type === "text") {
-        text += node.text + " "
-      } else {
-        text += getTextFromJSON(node)
-      }
+      if (node.type === "text") text += node.text + " "
+      else text += getTextFromJSON(node)
     }
     return text
   }
 
   const getReadingTime = (content?: JSONContent) => {
-    console.log("Calculating reading time for content:")
-    console.log(content)
     if (!content) return "0 min read"
     const text = getTextFromJSON(content)
     const wordCount = text.split(/\s+/).filter(Boolean).length
     return `${Math.ceil(wordCount / 200)} min read`
   }
 
-  // Loading State
+  // --- LOADING ---
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-yellow-300 via-yellow-300 to-yellow-400 min-h-screen font-main">
+      <div className="bg-[#022f40] min-h-screen font-main text-white flex flex-col">
         <BlogPostNavbar />
-        <main className="flex items-center justify-center min-h-[calc(100vh-5rem)]">
-          <div className="text-center bg-white/10 backdrop-blur-sm rounded-3xl p-16 shadow-2xl border border-white/20">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-black mx-auto mb-8"></div>
-            <p className="text-black text-xl font-medium">Loading your story...</p>
-            <p className="text-black/60 text-sm mt-2">Preparing the perfect reading experience</p>
+        <main className="flex flex-1 items-center justify-center">
+          <div className="text-center bg-[#183446] rounded-2xl p-16 shadow-md border border-[#046e8f]/40 max-w-md mx-6">
+            <div className="flex justify-center mb-8">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#046e8f]/40 border-t-[#38aecc]"></div>
+            </div>
+            <h3 className="text-white text-2xl font-bold mb-2">Loading Story</h3>
+            <p className="text-gray-400 text-lg">Preparing the perfect reading experience...</p>
           </div>
         </main>
       </div>
     )
   }
 
-  // Error State
+  // --- ERROR ---
   if (error || !post) {
     return (
-      <div className="bg-gradient-to-br from-yellow-300 via-yellow-300 to-yellow-400 min-h-screen font-main">
+      <div className="bg-[#022f40] min-h-screen font-main text-white flex flex-col">
         <BlogPostNavbar />
-        <main className="flex items-center justify-center min-h-[calc(100vh-5rem)]">
-          <div className="text-center bg-white/10 backdrop-blur-sm rounded-3xl p-16 max-w-2xl mx-6 shadow-2xl border border-white/20">
-            <div className="w-20 h-20 bg-black/10 rounded-full flex items-center justify-center mx-auto mb-8">
-              <FileText className="w-10 h-10 text-black/60" />
+        <main className="flex flex-1 items-center justify-center">
+          <div className="text-center bg-[#183446] rounded-2xl p-16 max-w-2xl mx-6 shadow-md border border-[#046e8f]/40">
+            <div className="flex justify-center mb-8">
+              <div className="w-20 h-20 bg-[#046e8f]/30 rounded-full flex items-center justify-center border border-[#046e8f]/40">
+                <FileText className="w-10 h-10 text-gray-300" />
+              </div>
             </div>
-            <h1 className="text-4xl font-bold mb-6 text-black">Story Not Found</h1>
-            <p className="text-black/70 text-lg mb-12 leading-relaxed">
-              The story you're looking for seems to have wandered off into the cinematic void. Perhaps it's waiting to
-              be written, or maybe it's found a new home.
+            <h1 className="text-4xl font-bold mb-6 text-[#38aecc]">Story Not Found</h1>
+            <p className="text-gray-200 text-lg mb-12 leading-relaxed font-light">
+              The story you're looking for seems to have wandered off into the cinematic void.  
+              Perhaps it's waiting to be written, or maybe it's found a new home.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/blog">
-                <button className="bg-black text-yellow-300 px-8 py-4 rounded-xl font-semibold transition-all flex items-center gap-3 shadow-xl">
+                <button className="bg-[#0090c1] hover:bg-[#046e8f] text-white px-8 py-4 rounded-lg font-semibold transition-all flex items-center gap-3 shadow-md">
                   <ArrowLeft className="w-5 h-5" />
                   Return to Blog
                 </button>
               </Link>
               <Link href="/">
-                <button className="bg-white/20 backdrop-blur-sm text-black px-8 py-4 rounded-xl font-semibold transition-all flex items-center gap-3 border border-white/30 shadow-lg">
+                <button className="bg-[#183446] hover:bg-[#046e8f] text-white px-8 py-4 rounded-lg font-semibold transition-all flex items-center gap-3 border border-[#046e8f]/40 shadow-md">
                   <Home className="w-5 h-5" />
                   Go Home
                 </button>
@@ -173,53 +175,50 @@ export default function BlogPostPage() {
     )
   }
 
-  // Main Content
+  // --- MAIN POST ---
   return (
-    <div className="bg-gradient-to-br from-yellow-300 via-yellow-300 to-yellow-400 min-h-screen font-main">
+    <div className="bg-[#022f40] min-h-screen font-main text-white flex flex-col">
       <BlogPostNavbar />
-      <main className="pt-16 pb-32 flex items-center justify-center">
-        <div className="max-w-6xl mx-auto px-6 md:px-8">
-          {/* Header Section */}
-          <header className="text-center mb-20">
-            <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-12 leading-tight tracking-tight">
-                {post.title}
-              </h1>
-              {/* Metadata */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-black/70">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center">
-                    <Calendar className="w-4 h-4 text-black/60" />
-                  </div>
-                  <span className="text-lg font-medium">{formatDate(post.createdAt)}</span>
-                </div>
-                <div className="hidden sm:block w-1 h-1 bg-black/30 rounded-full"></div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-black/60" />
-                  </div>
-                  <span className="text-lg font-medium">{getReadingTime(post.content)}</span>
-                </div>
+
+      <main className="flex-1 flex justify-center py-20 px-4">
+        <div className="w-full max-w-4xl text-center">
+          {/* Header */}
+          <header className="mb-16">
+            <h1 className="text-4xl md:text-6xl font-bold text-[#38aecc] mb-10 leading-tight tracking-tight">
+              {post.title}
+            </h1>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-gray-300">
+              <div className="flex items-center gap-2 bg-[#046e8f]/20 px-4 py-2 rounded-md">
+                <Calendar className="w-5 h-5" />
+                <span className="text-lg font-medium">{formatDate(post.createdAt)}</span>
+              </div>
+              <div className="hidden sm:block w-2 h-2 bg-[#38aecc]/30 rounded-full"></div>
+              <div className="flex items-center gap-2 bg-[#046e8f]/20 px-4 py-2 rounded-md">
+                <Clock className="w-5 h-5" />
+                <span className="text-lg font-medium">{getReadingTime(post.content)}</span>
               </div>
             </div>
           </header>
 
-          <div className="flex justify-center mb-20">
-            <div className="w-24 h-px bg-gradient-to-r from-transparent via-black/20 to-transparent"></div>
+          {/* Divider */}
+          <div className="flex justify-center mb-16">
+            <div className="w-24 h-1 bg-[#38aecc]/60 rounded-full"></div>
           </div>
 
-          {/* Content Rendering - NOW USING JsonContent COMPONENT */}
-          <article className="max-w-5xl mx-auto">
-            <JsonContent content={post.content} />
+          {/* Content */}
+          <article className="text-left">
+            <div className="bg-[#183446]/40 rounded-2xl p-8 md:p-12 border border-[#046e8f]/20 text-white leading-relaxed">
+              <JsonContent content={post.content} />
+            </div>
           </article>
 
           {/* Footer */}
-          <footer className="mt-24 text-center">
+          <footer className="mt-20 text-center">
             <div className="flex justify-center mb-8">
-              <div className="w-16 h-px bg-gradient-to-r from-transparent via-black/20 to-transparent"></div>
+              <div className="w-16 h-1 bg-[#38aecc]/40 rounded-full"></div>
             </div>
             <Link href="/blog">
-              <button className="bg-white/10 backdrop-blur-sm text-black px-10 py-4 rounded-2xl font-semibold transition-all flex items-center gap-3 mx-auto border border-white/20">
+              <button className="bg-[#0090c1] hover:bg-[#046e8f] text-white px-10 py-4 rounded-lg font-semibold transition-all flex items-center gap-3 mx-auto shadow-md">
                 <ArrowLeft className="w-5 h-5" />
                 Return to All Stories
               </button>
