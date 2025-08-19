@@ -1,40 +1,16 @@
-"use client"
 import React from "react";
 
-// Define the structure of a Tiptap node
-interface TiptapNode {
-  type: string;
-  attrs?: Record<string, any>;
-  content?: TiptapNode[];
-  text?: string;
-  marks?: Array<{ type: string; attrs?: Record<string, any> }>;
-}
-
-// Define the props for the TiptapJsonRenderer component
-interface TiptapJsonRendererProps {
-  content: {
-    type: "doc";
-    content: TiptapNode[];
-  };
-  className?: string;
-}
-
 // A helper component to dynamically render heading tags (h1, h2, etc.)
-// This avoids the TypeScript complexities of React.createElement for dynamic tags
-interface DynamicHeadingTagProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  tag: keyof JSX.IntrinsicElements; // Specifies that `tag` must be a valid HTML element tag name
-  children: React.ReactNode; // Content to be rendered inside the heading
-}
-
-const DynamicHeadingTag: React.FC<DynamicHeadingTagProps> = ({ tag, children, ...props }) => {
+// This component takes a 'tag' string (like "h1") and renders its children within that HTML tag.
+const DynamicHeadingTag = ({ tag, children, ...props }) => {
   const Tag = tag; // Assigns the string tag name to a variable for use as a component
   return <Tag {...props}>{children}</Tag>; // Renders the specified HTML tag with its props and children
 };
 
 // Main component to render Tiptap JSON content
-const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "" }) => {
+const JsonContent = ({ content, className = "" }) => {
   // Recursively renders a single Tiptap node and its children
-  const renderNode = (node: TiptapNode, index: number): React.ReactNode => {
+  const renderNode = (node, index) => {
     // Recursively render children nodes if they exist
     const children = node.content?.map((child, i) => renderNode(child, i));
 
@@ -48,9 +24,9 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
         );
 
       case "heading": {
-        const level = (node.attrs?.level ?? 1) as number; // Get heading level, default to 1
+        const level = node.attrs?.level ?? 1; // Get heading level, default to 1
         // Define Tailwind CSS classes for different heading levels
-        const headingClasses: Record<number, string> = {
+        const headingClasses = {
           1: "text-4xl font-bold mb-8 text-[#38aecc] text-center",
           2: "text-3xl font-semibold mb-6 text-[#38aecc] text-center",
           3: "text-2xl font-semibold mb-4 text-[#38aecc] text-center",
@@ -180,7 +156,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
 
       case "text": {
         const marks = node.marks || [];
-        let textElement: React.ReactNode = node.text; // Start with the raw text
+        let textElement = node.text; // Start with the raw text
 
         // Apply marks (bold, italic, etc.) in order
         marks.forEach((mark) => {
@@ -204,12 +180,11 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
                 </code>
               );
               break;
-            // Add more mark types as needed (e.g., link, subscript, superscript)
           }
         });
 
-        // Crucial fix: Wrap the textElement in a span with a unique key.
-        // This ensures that every text node, even plain strings, has a stable identity when rendered as part of a list.
+        // Wrap the textElement in a span with a unique key.
+        // This is crucial for React to correctly track elements in lists, even plain text.
         return <span key={`${node.type}-${index}`}>{textElement}</span>;
       }
 

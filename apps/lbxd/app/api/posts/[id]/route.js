@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/dbconnect";
 
-// Corrected: Define the shape of the context object that contains params
-interface RouteContext {
-  params: { id: string };
-}
-
 // GET
-export async function GET(req: NextRequest, { params }: RouteContext) {
-  const { id } = params;
-
+export async function GET(req, { params }) {
+  const { id } = await params;
+  
   try {
     const client = await pool.connect();
     try {
@@ -21,11 +16,11 @@ export async function GET(req: NextRequest, { params }: RouteContext) {
       `,
         [id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
-
+      
       const post = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
@@ -33,7 +28,7 @@ export async function GET(req: NextRequest, { params }: RouteContext) {
         createdAt: result.rows[0].created_at,
         updatedAt: result.rows[0].updated_at,
       };
-
+      
       return NextResponse.json(post);
     } finally {
       client.release();
@@ -44,20 +39,20 @@ export async function GET(req: NextRequest, { params }: RouteContext) {
   }
 }
 
-
 // PUT
-export async function PUT(req: NextRequest, { params }: RouteContext) {
-  const { id } = params;
+export async function PUT(req, { params }) {
+  const { id } = await params;
+  
   try {
     const { title, content } = await req.json();
-
+    
     if (!title || !content) {
       return NextResponse.json(
         { error: "Title and content are required" },
         { status: 400 }
       );
     }
-
+    
     const client = await pool.connect();
     try {
       const result = await client.query(
@@ -67,13 +62,13 @@ export async function PUT(req: NextRequest, { params }: RouteContext) {
         WHERE id = $3
         RETURNING id, title, content, created_at, updated_at
       `,
-        [title, JSON.stringify(content), id] // Assuming content is JSON you want to store as string
+        [title, JSON.stringify(content), id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
-
+      
       const updatedPost = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
@@ -81,7 +76,7 @@ export async function PUT(req: NextRequest, { params }: RouteContext) {
         createdAt: result.rows[0].created_at,
         updatedAt: result.rows[0].updated_at,
       };
-
+      
       return NextResponse.json(updatedPost);
     } finally {
       client.release();
@@ -92,11 +87,10 @@ export async function PUT(req: NextRequest, { params }: RouteContext) {
   }
 }
 
-
-
 // DELETE
-export async function DELETE(req: NextRequest, { params }: RouteContext) {
-  const { id } = params;
+export async function DELETE(req, { params }) {
+  const { id } = await params;
+  
   try {
     const client = await pool.connect();
     try {
@@ -108,11 +102,11 @@ export async function DELETE(req: NextRequest, { params }: RouteContext) {
       `,
         [id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
-
+      
       return NextResponse.json({ message: "Post deleted successfully" });
     } finally {
       client.release();

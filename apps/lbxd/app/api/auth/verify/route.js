@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(request) {
   try {
     const { password } = await request.json();
     const editorPassword = process.env.EDITOR_PASSWORD;
-
+    
     if (!editorPassword) {
       return NextResponse.json({ error: 'Editor password not configured' }, { status: 500 });
     }
-
+    
     if (password === editorPassword) {
       return NextResponse.json({ success: true });
     } else {

@@ -6,6 +6,30 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
+// Define the database row type
+interface BlogPostRow {
+  id: number;
+  title: string;
+  content: string; // JSON stored as string in database
+  created_at: Date;
+  updated_at: Date;
+}
+
+// Define the API response type
+interface BlogPostResponse {
+  id: string;
+  title: string;
+  content: any; // Parsed JSON content
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Define the request body type for PUT requests
+interface UpdatePostRequest {
+  title: string;
+  content: any; // JSON content object
+}
+
 // GET
 export async function GET(request: NextRequest, context: RouteContext) {
   // Await and destructure 'id' from 'context.params'
@@ -14,7 +38,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const client = await pool.connect();
     try {
-      const result = await client.query(
+      const result = await client.query<BlogPostRow>(
         `
         SELECT id, title, content, created_at, updated_at
         FROM sports_blog_posts
@@ -27,12 +51,13 @@ export async function GET(request: NextRequest, context: RouteContext) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
       
-      const post = {
-        id: result.rows[0].id.toString(),
-        title: result.rows[0].title,
-        content: result.rows[0].content,
-        createdAt: result.rows[0].created_at,
-        updatedAt: result.rows[0].updated_at,
+      const row = result.rows[0];
+      const post: BlogPostResponse = {
+        id: row!.id.toString(),
+        title: row!.title,
+        content: row!.content, // Assuming database driver auto-parses JSON
+        createdAt: row!.created_at,
+        updatedAt: row!.updated_at,
       };
       
       return NextResponse.json(post);
@@ -51,7 +76,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   const { id } = await context.params;
   
   try {
-    const { title, content } = await request.json();
+    const body: UpdatePostRequest = await request.json();
+    const { title, content } = body;
     
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
@@ -59,7 +85,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     
     const client = await pool.connect();
     try {
-      const result = await client.query(
+      const result = await client.query<BlogPostRow>(
         `
         UPDATE sports_blog_posts
         SET title = $1, content = $2, updated_at = NOW()
@@ -74,12 +100,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
       
-      const updatedPost = {
-        id: result.rows[0].id.toString(),
-        title: result.rows[0].title,
-        content: result.rows[0].content,
-        createdAt: result.rows[0].created_at,
-        updatedAt: result.rows[0].updated_at,
+      const row = result.rows[0];
+      const updatedPost: BlogPostResponse = {
+        id: row!.id.toString(),
+        title: row!.title,
+        content: row!.content, // Assuming database driver auto-parses JSON
+        createdAt: row!.created_at,
+        updatedAt: row!.updated_at,
       };
       
       return NextResponse.json(updatedPost);
@@ -100,7 +127,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const client = await pool.connect();
     try {
-      const result = await client.query(
+      const result = await client.query<{ id: number }>(
         `
         DELETE FROM sports_blog_posts
         WHERE id = $1
