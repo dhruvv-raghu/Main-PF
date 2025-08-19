@@ -3,14 +3,14 @@ import { pool } from '@/lib/dbconnect';
 
 // Define an interface for the entire context object passed to route handlers
 interface RouteContext {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // GET
 export async function GET(request: NextRequest, context: RouteContext) {
-  // Destructure 'id' from 'context.params'
-  const { id } = context.params;
-
+  // Await and destructure 'id' from 'context.params'
+  const { id } = await context.params;
+  
   try {
     const client = await pool.connect();
     try {
@@ -22,11 +22,11 @@ export async function GET(request: NextRequest, context: RouteContext) {
       `,
         [id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
-
+      
       const post = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
         createdAt: result.rows[0].created_at,
         updatedAt: result.rows[0].updated_at,
       };
-
+      
       return NextResponse.json(post);
     } finally {
       client.release();
@@ -47,17 +47,17 @@ export async function GET(request: NextRequest, context: RouteContext) {
 
 // PUT
 export async function PUT(request: NextRequest, context: RouteContext) {
-  // Destructure 'id' from 'context.params'
-  const { id } = context.params;
+  // Await and destructure 'id' from 'context.params'
+  const { id } = await context.params;
+  
   try {
     const { title, content } = await request.json();
-
+    
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
     }
-
+    
     const client = await pool.connect();
-
     try {
       const result = await client.query(
         `
@@ -69,11 +69,11 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         // Stringify the 'content' object before sending it to the database.
         [title, JSON.stringify(content), id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
-
+      
       const updatedPost = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
@@ -81,7 +81,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         createdAt: result.rows[0].created_at,
         updatedAt: result.rows[0].updated_at,
       };
-
+      
       return NextResponse.json(updatedPost);
     } finally {
       client.release();
@@ -92,14 +92,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-
 // DELETE
 export async function DELETE(request: NextRequest, context: RouteContext) {
-  // Destructure 'id' from 'context.params'
-  const { id } = context.params;
+  // Await and destructure 'id' from 'context.params'
+  const { id } = await context.params;
+  
   try {
     const client = await pool.connect();
-
     try {
       const result = await client.query(
         `
@@ -109,11 +108,11 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       `,
         [id]
       );
-
+      
       if (result.rows.length === 0) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
-
+      
       return NextResponse.json({ message: 'Post deleted successfully' });
     } finally {
       client.release();

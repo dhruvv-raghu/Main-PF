@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/dbconnect";
 
-interface RouteParams {
+// Corrected: Define the shape of the context object that contains params
+interface RouteContext {
   params: { id: string };
 }
 
 // GET
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(req: NextRequest, { params }: RouteContext) {
   const { id } = params;
 
   try {
@@ -43,8 +44,9 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   }
 }
 
+
 // PUT
-export async function PUT(req: NextRequest, { params }: RouteParams) {
+export async function PUT(req: NextRequest, { params }: RouteContext) {
   const { id } = params;
   try {
     const { title, content } = await req.json();
@@ -65,7 +67,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         WHERE id = $3
         RETURNING id, title, content, created_at, updated_at
       `,
-        [title, JSON.stringify(content), id]
+        [title, JSON.stringify(content), id] // Assuming content is JSON you want to store as string
       );
 
       if (result.rows.length === 0) {
@@ -90,8 +92,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   }
 }
 
+
+
 // DELETE
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(req: NextRequest, { params }: RouteContext) {
   const { id } = params;
   try {
     const client = await pool.connect();

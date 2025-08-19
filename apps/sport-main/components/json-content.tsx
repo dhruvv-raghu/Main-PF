@@ -17,15 +17,18 @@ interface TiptapJsonRendererProps {
 }
 
 const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "" }) => {
-  const renderNode = (node: TiptapNode, index: number): React.ReactNode => {
-    // Recursively render child nodes, passing a unique key
-    const children = node.content?.map((child, i) => renderNode(child, i))
+  const renderNode = (node: TiptapNode, index: number, path: string = ""): React.ReactNode => {
+    // Create a unique key by combining the path with current index
+    const currentPath = path ? `${path}-${index}` : `${index}`
+    
+    // Recursively render child nodes, passing the updated path
+    const children = node.content?.map((child, i) => renderNode(child, i, currentPath))
 
     switch (node.type) {
       case "paragraph":
         // FIX: Increased bottom margin for more space between paragraphs
         return (
-          <p key={index} className="mb-6 text-black leading-relaxed">
+          <p key={currentPath} className="mb-6 text-black leading-relaxed">
             {children}
           </p>
         )
@@ -41,28 +44,28 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
         }
 
         return (
-          <HeadingTag key={index} className={headingClasses[level as keyof typeof headingClasses]}>
+          <HeadingTag key={currentPath} className={headingClasses[level as keyof typeof headingClasses]}>
             {children}
           </HeadingTag>
         )
 
       case "bulletList":
         return (
-          <ul key={index} className="list-disc list-inside mb-6 space-y-2 text-black">
+          <ul key={currentPath} className="list-disc list-inside mb-6 space-y-2 text-black">
             {children}
           </ul>
         )
 
       case "orderedList":
         return (
-          <ol key={index} className="list-decimal list-inside mb-6 space-y-2 text-black">
+          <ol key={currentPath} className="list-decimal list-inside mb-6 space-y-2 text-black">
             {children}
           </ol>
         )
 
       case "listItem":
         return (
-          <li key={index} className="text-black list-style-none mx-0 px-0">
+          <li key={currentPath} className="text-black list-style-none mx-0 px-0">
             {children}
           </li>
         )
@@ -70,19 +73,19 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
       case "blockquote":
         // FIX: Using black border, with gray background/text for contrast
         return (
-          <blockquote key={index} className="border-l-4 border-black pl-6 py-2 mb-6 italic text-gray-700 bg-gray-100">
+          <blockquote key={currentPath} className="border-l-4 border-black pl-6 py-2 mb-6 italic text-gray-700 bg-gray-100">
             {children}
           </blockquote>
         )
 
       case "horizontalRule":
         // FIX: A standard <hr> with a black top border
-        return <hr key={index} className="my-8 border-t border-black" />
+        return <hr key={currentPath} className="my-8 border-t border-black" />
 
       case "hardBreak":
         // FIX: Using a single <br /> for a proper hard break
         return (
-          <React.Fragment key={index}>
+          <React.Fragment key={currentPath}>
             <br />
             <br />
           </React.Fragment>
@@ -91,7 +94,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
       case "image":
         return (
           <img
-            key={index}
+            key={currentPath}
             src={node.attrs?.src || "/placeholder.svg"}
             alt={node.attrs?.alt || ""}
             className="max-w-full h-auto my-6 rounded border border-black"
@@ -100,7 +103,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
 
       case "table":
         return (
-          <div key={index} className="overflow-x-auto my-6">
+          <div key={currentPath} className="overflow-x-auto my-6">
             <table className="w-full border-collapse border border-black">
               <tbody>{children}</tbody>
             </table>
@@ -109,21 +112,21 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
 
       case "tableRow":
         return (
-          <tr key={index} className="border-b border-black">
+          <tr key={currentPath} className="border-b border-black">
             {children}
           </tr>
         )
 
       case "tableHeader":
         return (
-          <th key={index} className="border border-black px-4 py-2 text-left font-semibold bg-gray-200 text-black">
+          <th key={currentPath} className="border border-black px-4 py-2 text-left font-semibold bg-gray-200 text-black">
             {children}
           </th>
         )
 
       case "tableCell":
         return (
-          <td key={index} className="border border-black px-4 py-2 text-black">
+          <td key={currentPath} className="border border-black px-4 py-2 text-black">
             {children}
           </td>
         )
@@ -131,7 +134,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
       case "youtube":
         const { src, width = 640, height = 480 } = node.attrs || {}
         return (
-          <div key={index} className="my-6 flex justify-center">
+          <div key={currentPath} className="my-6 flex justify-center">
             <div className="relative rounded overflow-hidden border border-black" style={{ maxWidth: width }}>
               <iframe src={src} width={width} height={height} frameBorder="0" allowFullScreen className="w-full" />
             </div>
@@ -171,7 +174,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
       default:
         // Using a Fragment to avoid adding extra divs for unknown node types.
         if (node.content) {
-          return <React.Fragment key={index}>{children}</React.Fragment>
+          return <React.Fragment key={currentPath}>{children}</React.Fragment>
         }
         return null
     }
@@ -181,7 +184,7 @@ const JsonContent: React.FC<TiptapJsonRendererProps> = ({ content, className = "
     return <div className="text-gray-500">No content to display</div>
   }
 
-  return <div className={`max-w-none ${className}`}>{content.content.map(renderNode)}</div>
+  return <div className={`max-w-none ${className}`}>{content.content.map((node, index) => renderNode(node, index))}</div>
 }
 
 export default JsonContent
