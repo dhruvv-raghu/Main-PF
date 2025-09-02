@@ -50,6 +50,7 @@ const Contact = () => {
   return (
     <section
       ref={sectionRef}
+      id="contacts"
       className="min-h-screen bg-[#2f3e46] flex items-center justify-center py-20"
     >
       <div className="max-w-4xl mx-auto px-6 md:px-8 lg:px-12 w-full">

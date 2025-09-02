@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
 import { Github } from "lucide-react";
+import Navbar  from "@/components/Other/Navbar";
 
 interface Project {
   title: string;
@@ -70,6 +71,7 @@ const ProjectShowcase = () => {
 
   return (
     <div className="relative">
+      <Navbar />
       {/* Navigation Dots */}
       <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 space-y-4">
         {projects.map((_, index) => (

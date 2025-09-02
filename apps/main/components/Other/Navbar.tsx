@@ -3,13 +3,18 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
-// FIX 1: Define an interface for the navigation item
+// Define an interface for a single navigation item
 interface NavItem {
   label: string;
   href: string;
 }
 
-const Navbar = () => {
+// Define the props for the Navbar component
+interface NavbarProps {
+  navItems?: NavItem[]; // navItems is now an optional prop
+}
+
+const Navbar = ({ navItems = [] }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -22,16 +27,8 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // FIX 2: Apply the NavItem type to the array
-  const navItems: NavItem[] = [
-    { label: "About", href: "#about" },
-    { label: "Technologies", href: "#technologies" },
-    { label: "Projects", href: "/projects" },
-    { label: "Interests", href: "#interests" },
-    { label: "Contact", href: "#contact" },
-  ];
+  // The hardcoded navItems array has been removed from here.
 
-  // FIX 3: Apply the NavItem type to the function parameter
   const handleRedirect = (item: NavItem) => {
     if (item.href.startsWith("#")) {
       const element = document.querySelector(item.href);
@@ -60,32 +57,36 @@ const Navbar = () => {
             </h1>
           </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 lg:gap-12">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => handleRedirect(item)}
-                className="text-nav-text hover:text-nav-text-hover text-lg font-medium uppercase tracking-widest transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-white/10"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          {/* Desktop Navigation - Renders only if navItems has items */}
+          {navItems.length > 0 && (
+            <div className="hidden md:flex items-center gap-8 lg:gap-12">
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => handleRedirect(item)}
+                  className="text-nav-text hover:text-nav-text-hover text-lg font-medium uppercase tracking-widest transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-white/10"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-nav-text hover:text-nav-text-hover p-2 rounded-lg hover:bg-white/10 transition-all"
-            >
-              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
+          {/* Mobile menu button - Renders only if navItems has items */}
+          {navItems.length > 0 && (
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-nav-text hover:text-nav-text-hover p-2 rounded-lg hover:bg-white/10 transition-all"
+              >
+                {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
+        {/* Mobile Navigation - Renders only if menu is open and navItems has items */}
+        {isMobileMenuOpen && navItems.length > 0 && (
           <div className="md:hidden mt-4">
             <div className="bg-nav-glass backdrop-blur-lg rounded-lg p-4 space-y-4">
               {navItems.map((item) => (
