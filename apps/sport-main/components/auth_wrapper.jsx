@@ -7,11 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Lock, AlertCircle } from 'lucide-react';
 
-interface AuthWrapperProps {
-  children: React.ReactNode;
-}
-
-export default function AuthWrapper({ children }: AuthWrapperProps) {
+export default function AuthWrapper({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,7 +22,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
     }
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');

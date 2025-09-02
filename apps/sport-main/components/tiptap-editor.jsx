@@ -1,26 +1,21 @@
-'use client';
+"use client"
 
-import { useState, useEffect, useCallback } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import HardBreak from '@tiptap/extension-hard-break';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
-import Image from '@tiptap/extension-image';
-import Dropcursor from '@tiptap/extension-dropcursor';
-import { Table, TableRow, TableHeader, TableCell } from '@tiptap/extension-table';
-import Gapcursor from '@tiptap/extension-gapcursor';
-import Youtube from '@tiptap/extension-youtube';
-import { ChevronDown, Save, FileText, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { useState, useEffect, useCallback } from "react"
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import Underline from "@tiptap/extension-underline"
+import HardBreak from "@tiptap/extension-hard-break"
+import HorizontalRule from "@tiptap/extension-horizontal-rule"
+import Image from "@tiptap/extension-image"
+import Dropcursor from "@tiptap/extension-dropcursor"
+import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table"
+import Gapcursor from "@tiptap/extension-gapcursor"
+import Youtube from "@tiptap/extension-youtube"
+import { ChevronDown, Save, FileText, CheckCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -28,13 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import Link from 'next/link';
-import './styles.scss';
+} from "@/components/ui/dialog"
+import Link from "next/link"
+import "./styles.scss"
+import { cn } from "@/lib/utils"
 
 // Modal for Image URL
 function ImageUrlPrompt({ onConfirm, onCancel }) {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("")
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
@@ -45,7 +41,7 @@ function ImageUrlPrompt({ onConfirm, onCancel }) {
           onChange={(e) => setUrl(e.target.value)}
           className="border border-gray-300 rounded-md w-full p-2 mb-4"
           placeholder="https://example.com/image.png"
-          onKeyDown={(e) => e.key === 'Enter' && onConfirm(url)}
+          onKeyDown={(e) => e.key === "Enter" && onConfirm(url)}
         />
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onCancel}>
@@ -57,24 +53,24 @@ function ImageUrlPrompt({ onConfirm, onCancel }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // Modal for YouTube Video
 function YoutubeUrlPrompt({ onConfirm, onCancel }) {
-  const [url, setUrl] = useState('');
-  const [width, setWidth] = useState(640);
-  const [height, setHeight] = useState(480);
+  const [url, setUrl] = useState("")
+  const [width, setWidth] = useState(640)
+  const [height, setHeight] = useState(480)
 
   const handleSubmit = () => {
     if (url) {
       onConfirm({
         url,
-        width: Math.max(320, parseInt(width, 10)) || 640,
-        height: Math.max(180, parseInt(height, 10)) || 480,
-      });
+        width: Math.max(320, Number.parseInt(width, 10)) || 640,
+        height: Math.max(180, Number.parseInt(height, 10)) || 480,
+      })
     }
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
@@ -113,72 +109,67 @@ function YoutubeUrlPrompt({ onConfirm, onCancel }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function MenuBar({ editor }) {
-  const [activeStates, setActiveStates] = useState({});
-  const [isImagePromptOpen, setIsImagePromptOpen] = useState(false);
-  const [isYoutubePromptOpen, setIsYoutubePromptOpen] = useState(false);
-  const [isTableFocused, setIsTableFocused] = useState(false);
+  const [activeStates, setActiveStates] = useState({})
+  const [isImagePromptOpen, setIsImagePromptOpen] = useState(false)
+  const [isYoutubePromptOpen, setIsYoutubePromptOpen] = useState(false)
+  const [isTableFocused, setIsTableFocused] = useState(false)
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor) return
 
     const updateStates = () => {
       setActiveStates({
-        bold: editor.isActive('bold'),
-        italic: editor.isActive('italic'),
-        underline: editor.isActive('underline'),
-        strike: editor.isActive('strike'),
-        code: editor.isActive('code'),
-        blockquote: editor.isActive('blockquote'),
-        bulletList: editor.isActive('bulletList'),
-        orderedList: editor.isActive('orderedList'),
-        heading1: editor.isActive('heading', { level: 1 }),
-        heading2: editor.isActive('heading', { level: 2 }),
-        heading3: editor.isActive('heading', { level: 3 }),
-      });
-      setIsTableFocused(editor.can().deleteTable());
-    };
+        bold: editor.isActive("bold"),
+        italic: editor.isActive("italic"),
+        underline: editor.isActive("underline"),
+        strike: editor.isActive("strike"),
+        code: editor.isActive("code"),
+        blockquote: editor.isActive("blockquote"),
+        bulletList: editor.isActive("bulletList"),
+        orderedList: editor.isActive("orderedList"),
+        heading1: editor.isActive("heading", { level: 1 }),
+        heading2: editor.isActive("heading", { level: 2 }),
+        heading3: editor.isActive("heading", { level: 3 }),
+      })
+      setIsTableFocused(editor.can().deleteTable())
+    }
 
-    editor.on('transaction', updateStates);
-    editor.on('selectionUpdate', updateStates);
+    editor.on("transaction", updateStates)
+    editor.on("selectionUpdate", updateStates)
 
     return () => {
-      editor.off('transaction', updateStates);
-      editor.off('selectionUpdate', updateStates);
-    };
-  }, [editor]);
+      editor.off("transaction", updateStates)
+      editor.off("selectionUpdate", updateStates)
+    }
+  }, [editor])
 
   const addImage = useCallback(
     (url) => {
-      if (url) editor.chain().focus().setImage({ src: url }).run();
-      setIsImagePromptOpen(false);
+      if (url) editor.chain().focus().setImage({ src: url }).run()
+      setIsImagePromptOpen(false)
     },
-    [editor]
-  );
+    [editor],
+  )
 
   const addYoutubeVideo = useCallback(
     ({ url, width, height }) => {
-      if (url) editor.chain().focus().setYoutubeVideo({ src: url, width, height }).run();
-      setIsYoutubePromptOpen(false);
+      if (url) editor.chain().focus().setYoutubeVideo({ src: url, width, height }).run()
+      setIsYoutubePromptOpen(false)
     },
-    [editor]
-  );
+    [editor],
+  )
 
-  if (!editor) return null;
+  if (!editor) return null
 
   return (
     <>
-      {isImagePromptOpen && (
-        <ImageUrlPrompt onConfirm={addImage} onCancel={() => setIsImagePromptOpen(false)} />
-      )}
+      {isImagePromptOpen && <ImageUrlPrompt onConfirm={addImage} onCancel={() => setIsImagePromptOpen(false)} />}
       {isYoutubePromptOpen && (
-        <YoutubeUrlPrompt
-          onConfirm={addYoutubeVideo}
-          onCancel={() => setIsYoutubePromptOpen(false)}
-        />
+        <YoutubeUrlPrompt onConfirm={addYoutubeVideo} onCancel={() => setIsYoutubePromptOpen(false)} />
       )}
       <div className="bg-black border-b border-yellow-300 p-2 flex flex-wrap gap-2">
         {/* Text Formatting Dropdown */}
@@ -186,14 +177,12 @@ export function MenuBar({ editor }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`flex items-center gap-1 ${
-                activeStates.bold ||
-                activeStates.italic ||
-                activeStates.underline ||
-                activeStates.strike
-                  ? 'bg-yellow-300 text-black hover:bg-yellow-400'
-                  : 'bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400'
-              }`}
+              className={cn(
+                "flex items-center gap-1",
+                activeStates.bold || activeStates.italic || activeStates.underline || activeStates.strike
+                  ? "bg-yellow-300 text-black hover:bg-yellow-400"
+                  : "bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400",
+              )}
             >
               Text Formatting <ChevronDown className="h-3 w-3" />
             </Button>
@@ -201,27 +190,27 @@ export function MenuBar({ editor }) {
           <DropdownMenuContent>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleBold().run()}
-              className={`cursor-pointer ${activeStates.bold ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.bold ? "bg-yellow-300 text-black" : "")}
             >
-              Bold {activeStates.bold && '✓'}
+              Bold {activeStates.bold && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={`cursor-pointer ${activeStates.italic ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.italic ? "bg-yellow-300 text-black" : "")}
             >
-              Italic {activeStates.italic && '✓'}
+              Italic {activeStates.italic && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={`cursor-pointer ${activeStates.underline ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.underline ? "bg-yellow-300 text-black" : "")}
             >
-              Underline {activeStates.underline && '✓'}
+              Underline {activeStates.underline && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleStrike().run()}
-              className={`cursor-pointer ${activeStates.strike ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.strike ? "bg-yellow-300 text-black" : "")}
             >
-              Strikethrough {activeStates.strike && '✓'}
+              Strikethrough {activeStates.strike && "✓"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -231,11 +220,12 @@ export function MenuBar({ editor }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`flex items-center gap-1 ${
+              className={cn(
+                "flex items-center gap-1",
                 activeStates.heading1 || activeStates.heading2 || activeStates.heading3
-                  ? 'bg-yellow-300 text-black hover:bg-yellow-400'
-                  : 'bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400'
-              }`}
+                  ? "bg-yellow-300 text-black hover:bg-yellow-400"
+                  : "bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400",
+              )}
             >
               Headings <ChevronDown className="h-3 w-3" />
             </Button>
@@ -243,21 +233,21 @@ export function MenuBar({ editor }) {
           <DropdownMenuContent>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-              className={`cursor-pointer ${activeStates.heading1 ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.heading1 ? "bg-yellow-300 text-black" : "")}
             >
-              H1 {activeStates.heading1 && '✓'}
+              H1 {activeStates.heading1 && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-              className={`cursor-pointer ${activeStates.heading2 ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.heading2 ? "bg-yellow-300 text-black" : "")}
             >
-              H2 {activeStates.heading2 && '✓'}
+              H2 {activeStates.heading2 && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-              className={`cursor-pointer ${activeStates.heading3 ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.heading3 ? "bg-yellow-300 text-black" : "")}
             >
-              H3 {activeStates.heading3 && '✓'}
+              H3 {activeStates.heading3 && "✓"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -267,11 +257,12 @@ export function MenuBar({ editor }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`flex items-center gap-1 ${
+              className={cn(
+                "flex items-center gap-1",
                 activeStates.bulletList || activeStates.orderedList
-                  ? 'bg-yellow-300 text-black hover:bg-yellow-400'
-                  : 'bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400'
-              }`}
+                  ? "bg-yellow-300 text-black hover:bg-yellow-400"
+                  : "bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400",
+              )}
             >
               Lists <ChevronDown className="h-3 w-3" />
             </Button>
@@ -279,15 +270,15 @@ export function MenuBar({ editor }) {
           <DropdownMenuContent>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={`cursor-pointer ${activeStates.bulletList ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.bulletList ? "bg-yellow-300 text-black" : "")}
             >
-              Bullet List {activeStates.bulletList && '✓'}
+              Bullet List {activeStates.bulletList && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className={`cursor-pointer ${activeStates.orderedList ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.orderedList ? "bg-yellow-300 text-black" : "")}
             >
-              Numbered List {activeStates.orderedList && '✓'}
+              Numbered List {activeStates.orderedList && "✓"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -297,11 +288,12 @@ export function MenuBar({ editor }) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`flex items-center gap-1 ${
+              className={cn(
+                "flex items-center gap-1",
                 activeStates.code || activeStates.blockquote
-                  ? 'bg-yellow-300 text-black hover:bg-yellow-400'
-                  : 'bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400'
-              }`}
+                  ? "bg-yellow-300 text-black hover:bg-yellow-400"
+                  : "bg-black text-yellow-300 hover:bg-gray-800 hover:text-yellow-400",
+              )}
             >
               Blocks <ChevronDown className="h-3 w-3" />
             </Button>
@@ -309,22 +301,20 @@ export function MenuBar({ editor }) {
           <DropdownMenuContent>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleCode().run()}
-              className={`cursor-pointer ${activeStates.code ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.code ? "bg-yellow-300 text-black" : "")}
             >
-              Inline Code {activeStates.code && '✓'}
+              Inline Code {activeStates.code && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              className={`cursor-pointer ${activeStates.blockquote ? 'bg-yellow-300 text-black' : ''}`}
+              className={cn("cursor-pointer", activeStates.blockquote ? "bg-yellow-300 text-black" : "")}
             >
-              Quote Block {activeStates.blockquote && '✓'}
+              Quote Block {activeStates.blockquote && "✓"}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => editor.chain().focus().setHorizontalRule().run()}>
               Horizontal Rule
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setHardBreak().run()}>
-              Hard Break
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => editor.chain().focus().setHardBreak().run()}>Hard Break</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -339,12 +329,8 @@ export function MenuBar({ editor }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setIsImagePromptOpen(true)}>
-              Add Image
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setIsYoutubePromptOpen(true)}>
-              Add YouTube Video
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsImagePromptOpen(true)}>Add Image</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsYoutubePromptOpen(true)}>Add YouTube Video</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -358,96 +344,68 @@ export function MenuBar({ editor }) {
               Table <ChevronDown className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="font-main">
             <DropdownMenuItem
-              onClick={() =>
-                editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-              }
+              onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
             >
               Insert Table
             </DropdownMenuItem>
             <div className="my-1 h-px bg-gray-200" />
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().addColumnBefore().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().addColumnBefore().run()} disabled={!isTableFocused}>
               Add Column Before
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().addColumnAfter().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={!isTableFocused}>
               Add Column After
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().deleteColumn().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteColumn().run()} disabled={!isTableFocused}>
               Delete Column
             </DropdownMenuItem>
             <div className="my-1 h-px bg-gray-200" />
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().addRowBefore().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().addRowBefore().run()} disabled={!isTableFocused}>
               Add Row Before
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().addRowAfter().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().addRowAfter().run()} disabled={!isTableFocused}>
               Add Row After
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().deleteRow().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteRow().run()} disabled={!isTableFocused}>
               Delete Row
             </DropdownMenuItem>
             <div className="my-1 h-px bg-gray-200" />
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().mergeOrSplit().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().mergeOrSplit().run()} disabled={!isTableFocused}>
               Merge/Split Cell
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().toggleHeaderRow().run()} disabled={!isTableFocused}>
               Toggle Header Row
             </DropdownMenuItem>
             <div className="my-1 h-px bg-gray-200" />
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().deleteTable().run()}
-              disabled={!isTableFocused}
-            >
+            <DropdownMenuItem onClick={() => editor.chain().focus().deleteTable().run()} disabled={!isTableFocused}>
               Delete Table
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </>
-  );
+  )
 }
 
-// NAMED EXPORT for the Navbar - Updated to match your design
-export function BlogNavbar() {
+export function BlogNavbar({
+  bgClass = "bg-black",
+  textClass = "text-yellow-300",
+  hoverTextClass = "hover:text-yellow-400",
+}) {
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50 bg-black w-full">
+    <nav className={cn("sticky top-0 left-0 right-0 z-50 w-full", bgClass)}>
       <div className="container mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/">
             <div>
-              <span className="text-yellow-300 text-2xl font-bold tracking-wider">[Watchr]</span>
-              <span className="block text-yellow-300 text-2xl font-bold tracking-wider">
-                A Dhruvv Raghu Project
-              </span>
+              <span className={cn("text-2xl font-bold tracking-wider", textClass)}>[Watchr]</span>
+              <span className={cn("block text-2xl font-bold tracking-wider", textClass)}>A Dhruvv Raghu Project</span>
             </div>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/blog">
-              <button className="text-yellow-300 hover:text-yellow-400 flex items-center gap-2">
+              <button className={cn("flex items-center gap-2", textClass, hoverTextClass)}>
                 <FileText className="w-4 h-4" />
                 View Blog
               </button>
@@ -456,15 +414,15 @@ export function BlogNavbar() {
         </div>
       </div>
     </nav>
-  );
+  )
 }
 
 // DEFAULT EXPORT is now the enhanced editor component with post creation
 export default function Tiptap() {
-  const [title, setTitle] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('');
-  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [title, setTitle] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveStatus, setSaveStatus] = useState("")
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -488,50 +446,48 @@ export default function Tiptap() {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class:
-          'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl min-h-[500px] focus:outline-none p-4 w-full',
+        class: "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl min-h-[500px] focus:outline-none p-4 w-full",
       },
     },
-  });
+  })
 
   const handleSavePost = async () => {
     if (!title.trim() || !editor?.getJSON()) {
-      setSaveStatus('Please enter a title and content');
-      return;
+      setSaveStatus("Please enter a title and content")
+      return
     }
 
-    setIsSaving(true);
-    setSaveStatus('');
+    setIsSaving(true)
+    setSaveStatus("")
 
     try {
-      
-      const response = await fetch('/api/posts', {
-        method: 'POST',
+      const response = await fetch("/api/posts", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title: title.trim(),
           content: editor.getJSON(),
         }),
-      });
+      })
 
       if (response.ok) {
-        setSaveStatus('Post saved successfully!');
-        setTitle('');
+        setSaveStatus("Post saved successfully!")
+        setTitle("")
         editor?.commands.setContent(
-          '<h1>Welcome to the Blog Editor!</h1><p>Start writing your next blog post here.</p>'
-        );
-        setIsPublishDialogOpen(false);
+          "<h1>Welcome to the Blog Editor!</h1><p>Start writing your next blog post here.</p>",
+        )
+        setIsPublishDialogOpen(false)
       } else {
-        setSaveStatus('Failed to save post');
+        setSaveStatus("Failed to save post")
       }
     } catch (error) {
-      setSaveStatus('Error saving post');
+      setSaveStatus("Error saving post")
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   return (
     <div className="w-full max-w-6xl space-y-4">
@@ -557,14 +513,12 @@ export default function Tiptap() {
         <div className="flex items-center gap-4">
           {saveStatus && (
             <Alert
-              className={`${saveStatus.includes('successfully') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}
+              className={cn(
+                saveStatus.includes("successfully") ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50",
+              )}
             >
-              <AlertDescription
-                className={saveStatus.includes('successfully') ? 'text-green-800' : 'text-red-800'}
-              >
-                {saveStatus.includes('successfully') && (
-                  <CheckCircle className="w-4 h-4 inline mr-2" />
-                )}
+              <AlertDescription className={cn(saveStatus.includes("successfully") ? "text-green-800" : "text-red-800")}>
+                {saveStatus.includes("successfully") && <CheckCircle className="w-4 h-4 inline mr-2" />}
                 {saveStatus}
               </AlertDescription>
             </Alert>
@@ -573,7 +527,7 @@ export default function Tiptap() {
 
         <Dialog open={isPublishDialogOpen} onOpenChange={setIsPublishDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
+            <Button className="bg-black hover:bg-[#006d77] text-white">
               <Save className="w-4 h-4 mr-2" />
               Publish Post
             </Button>
@@ -602,9 +556,9 @@ export default function Tiptap() {
                 <Button
                   onClick={handleSavePost}
                   disabled={isSaving || !title.trim()}
-                  className="bg-yellow-600 hover:bg-yellow-700"
+                  className="bg-[#006d77] hover:bg-[#005f66] text-white"
                 >
-                  {isSaving ? 'Publishing...' : 'Publish Post'}
+                  {isSaving ? "Publishing..." : "Publish Post"}
                 </Button>
               </div>
             </div>
@@ -612,5 +566,5 @@ export default function Tiptap() {
         </Dialog>
       </div>
     </div>
-  );
+  )
 }

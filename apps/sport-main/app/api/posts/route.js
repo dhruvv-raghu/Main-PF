@@ -1,15 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { pool } from '@/lib/dbconnect';
-import { JSONContent } from '@tiptap/react'; // For type safety
-
-// Update the interface for consistency
-interface BlogPost {
-  id: string;
-  title: string;
-  content: JSONContent; // Use JSONContent type
-  createdAt: string;
-  updatedAt: string;
-}
 
 // The GET function is correct and requires no changes.
 export async function GET() {
@@ -25,7 +15,7 @@ export async function GET() {
 
       // Transform the data to match our interface
       // The 'content' field is automatically parsed from JSONB by the driver.
-      const posts: BlogPost[] = result.rows.map((row) => ({
+      const posts = result.rows.map((row) => ({
         id: row.id.toString(),
         title: row.title,
         content: row.content,
@@ -44,9 +34,9 @@ export async function GET() {
 }
 
 // The POST function is updated to correctly handle the JSON content.
-export async function POST(request: NextRequest) {
+export async function POST(request) {
   try {
-    const { title, content }: { title: string; content: JSONContent } = await request.json();
+    const { title, content } = await request.json();
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
@@ -65,7 +55,7 @@ export async function POST(request: NextRequest) {
         [title, JSON.stringify(content)]
       );
 
-      const newPost: BlogPost = {
+      const newPost = {
         id: result.rows[0].id.toString(),
         title: result.rows[0].title,
         content: result.rows[0].content,
